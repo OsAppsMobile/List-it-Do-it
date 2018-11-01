@@ -10,13 +10,14 @@ import UIKit
 import RealmSwift
 import ChameleonFramework
 
-class ListItVC: UITableViewController {
+class ListItVC: SwipeTableVC {
 
     let realm = try! Realm()
     var listArray: Results<ListModel>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.rowHeight = 80.0
         readListItems()
     }
     
@@ -38,6 +39,19 @@ class ListItVC: UITableViewController {
         tableView.reloadData()
     }
     
+    override func updateDataModel(at indexPath: IndexPath) {
+        if let listItItem = self.listArray?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(listItItem)
+                }
+            } catch {
+                print("Error deleting selected category: \(error)")
+            }
+            tableView.reloadData()
+        }
+    }
+    
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -45,7 +59,7 @@ class ListItVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ListCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         cell.textLabel?.text = listArray?[indexPath.row].name ?? "No categories for List it added yet."
         cell.backgroundColor = UIColor(hexString: listArray?[indexPath.row].backgroundColor ?? "1D9BF6")

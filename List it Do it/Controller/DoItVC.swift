@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 import ChameleonFramework
 
-class DoItVC: UITableViewController {
+class DoItVC: SwipeTableVC {
 
     @IBOutlet weak var searchBar: UISearchBar!
     let realm = try! Realm()
@@ -19,6 +19,8 @@ class DoItVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.delegate = self
+        tableView.rowHeight = 80.0
     }
 
     // MARK: - Table view data source
@@ -32,6 +34,19 @@ class DoItVC: UITableViewController {
         doItItems = ListItItem.doItems.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }
+    
+    override func updateDataModel(at indexPath: IndexPath) {
+        if let doItItem = doItItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(doItItem)
+                }
+            } catch {
+                print("Error deleting selected category: \(error)")
+            }
+            tableView.reloadData()
+        }
+    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return doItItems?.count ?? 1
@@ -39,7 +54,7 @@ class DoItVC: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DoCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         if let doItItem = doItItems?[indexPath.row] {
             cell.textLabel?.text = doItItem.title

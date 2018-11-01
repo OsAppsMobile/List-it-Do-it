@@ -15,6 +15,7 @@
 		A9731D57218AD84A00CEE849 /* ListItVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9731D56218AD84A00CEE849 /* ListItVC.swift */; };
 		A9731D59218ADD2000CEE849 /* ListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9731D58218ADD2000CEE849 /* ListModel.swift */; };
 		A9731D5B218ADD5C00CEE849 /* DoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9731D5A218ADD5C00CEE849 /* DoModel.swift */; };
+		A9731D5D218AF0A900CEE849 /* SwipeTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9731D5C218AF0A900CEE849 /* SwipeTableVC.swift */; };
 		D4392976C2620FD2ED12F78A /* Pods_List_it_Do_it.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BA4D35549D697CC79B2A75E /* Pods_List_it_Do_it.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		A9731D56218AD84A00CEE849 /* ListItVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItVC.swift; sourceTree = "<group>"; };
 		A9731D58218ADD2000CEE849 /* ListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListModel.swift; sourceTree = "<group>"; };
 		A9731D5A218ADD5C00CEE849 /* DoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoModel.swift; sourceTree = "<group>"; };
+		A9731D5C218AF0A900CEE849 /* SwipeTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableVC.swift; sourceTree = "<group>"; };
 		D46F2524633FA0DED3CC2C37 /* Pods-List it Do it.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-List it Do it.debug.xcconfig"; path = "Pods/Target Support Files/Pods-List it Do it/Pods-List it Do it.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -89,6 +91,7 @@
 				A9731D52218AD79700CEE849 /* Controller */,
 				A9731D54218AD7D500CEE849 /* Supporting Files */,
 				A9731D4A218AD36E00CEE849 /* Info.plist */,
+				A9731D45218AD36E00CEE849 /* Assets.xcassets */,
 			);
 			path = "List it Do it";
 			sourceTree = "<group>";
@@ -99,6 +102,7 @@
 				A9731D3E218AD36C00CEE849 /* AppDelegate.swift */,
 				A9731D56218AD84A00CEE849 /* ListItVC.swift */,
 				A9731D50218AD79000CEE849 /* DoItVC.swift */,
+				A9731D5C218AF0A900CEE849 /* SwipeTableVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -115,7 +119,6 @@
 		A9731D54218AD7D500CEE849 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A9731D45218AD36E00CEE849 /* Assets.xcassets */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 				A9731D5B218ADD5C00CEE849 /* DoModel.swift in Sources */,
 				A9731D57218AD84A00CEE849 /* ListItVC.swift in Sources */,
 				A9731D3F218AD36C00CEE849 /* AppDelegate.swift in Sources */,
+				A9731D5D218AF0A900CEE849 /* SwipeTableVC.swift in Sources */,
 				A9731D59218ADD2000CEE849 /* ListModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
