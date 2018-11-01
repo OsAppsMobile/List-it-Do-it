@@ -53,7 +53,20 @@ class ListItVC: UITableViewController {
         
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let listIt = listArray?[indexPath.row] else { return }
+        performSegue(withIdentifier: "goToDoIt", sender: listIt)
+    }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToDoIt" {
+            guard let doItVC = segue.destination as? DoItVC else { return }
+            assert(sender as? ListModel != nil)
+            doItVC.updateListItItem(listItItem: sender as! ListModel)
+        }
+    }
+    
     @IBAction func addButonWasPressed(_ sender: UIBarButtonItem) {
         
         var alertItemField = UITextField()
