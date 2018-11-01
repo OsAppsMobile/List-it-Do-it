@@ -8,38 +8,73 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class ListItVC: UITableViewController {
 
     let realm = try! Realm()
+    var listArray: Results<ListModel>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        readListItems()
+    }
+    
+    func saveListItem(listItem: ListModel) {
+        do {
+            try realm.write {
+                realm.add(listItem)
+            }
+        } catch {
+            print("Error saving context: \(error)")
+        }
+        tableView.reloadData()
     }
 
+    func readListItems() {
+        
+        listArray = realm.objects(ListModel.self)
+        
+        tableView.reloadData()
+    }
+    
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return listArray?.count ?? 1
     }
 
-    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ListCell", for: indexPath)
 
-        // Configure the cell...
-
+        cell.textLabel?.text = listArray?[indexPath.row].name ?? "No categories for List it added yet."
+        cell.backgroundColor = UIColor(hexString: listArray?[indexPath.row].backgroundColor ?? "1D9BF6")
+        cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+        
         return cell
     }
-    */
 
-
+    @IBAction func addButonWasPressed(_ sender: UIBarButtonItem) {
+        
+        var alertItemField = UITextField()
+        let alert = UIAlertController(title: "Add New List it Category", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
+            if alertItemField.text != "" {
+                let listItem = ListModel()
+                listItem.name = alertItemField.text!
+                listItem.backgroundColor = UIColor.randomFlat.hexValue()
+                self.saveListItem(listItem: listItem)
+            }
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new category"
+            alertItemField = alertTextField
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
 
 }
