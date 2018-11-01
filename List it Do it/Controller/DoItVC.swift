@@ -15,23 +15,41 @@ class DoItVC: SwipeTableVC {
     @IBOutlet weak var searchBar: UISearchBar!
     let realm = try! Realm()
     var doItItems: Results<DoModel>?
-    var ListItItem = ListModel()
+    var listItItem = ListModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         searchBar.delegate = self
         tableView.rowHeight = 80.0
+        navigationController?.navigationBar.barTintColor = UIColor(hexString: listItItem.backgroundColor)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        title = listItItem.name
+        guard let navBar = navigationController?.navigationBar else { fatalError("Navigation controller does not exist.") }
+        navBar.barTintColor = UIColor(hexString: listItItem.backgroundColor)
+        navBar.tintColor = ContrastColorOf(UIColor(hexString: listItItem.backgroundColor)!, returnFlat: true)
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(UIColor(hexString: listItItem.backgroundColor)!, returnFlat: true)]
+        searchBar.barTintColor = UIColor(hexString: listItItem.backgroundColor)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        guard let originalColour = UIColor(hexString: "F6A623") else { fatalError() }
+        navigationController?.navigationBar.barTintColor = originalColour
+        navigationController?.navigationBar.tintColor = FlatWhite()
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: FlatWhite()]
     }
 
     // MARK: - Table view data source
     
     func updateListItItem(listItItem: ListModel) {
-        self.ListItItem = listItItem
+        self.listItItem = listItItem
         readDoItItems()
     }
     
     func readDoItItems() {
-        doItItems = ListItItem.doItems.sorted(byKeyPath: "title", ascending: true)
+        doItItems = listItItem.doItems.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }
     
@@ -58,7 +76,7 @@ class DoItVC: SwipeTableVC {
 
         if let doItItem = doItItems?[indexPath.row] {
             cell.textLabel?.text = doItItem.title
-            let listItItemColor = UIColor(hexString: ListItItem.backgroundColor)
+            let listItItemColor = UIColor(hexString: listItItem.backgroundColor)
             cell.backgroundColor = listItItemColor!.darken(byPercentage: (CGFloat(indexPath.row) / CGFloat((doItItems?.count)!)))
             cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
             
@@ -100,7 +118,7 @@ class DoItVC: SwipeTableVC {
                 doItItem.title = alertItemField.text!
                 do {
                     try self.realm.write {
-                        self.ListItItem.doItems.append(doItItem)
+                        self.listItItem.doItems.append(doItItem)
                     }
                 } catch {
                     print("Error saving context: \(error)")

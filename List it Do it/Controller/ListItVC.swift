@@ -62,7 +62,7 @@ class ListItVC: SwipeTableVC {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         cell.textLabel?.text = listArray?[indexPath.row].name ?? "No categories for List it added yet."
-        cell.backgroundColor = UIColor(hexString: listArray?[indexPath.row].backgroundColor ?? "1D9BF6")
+        cell.backgroundColor = UIColor(hexString: listArray?[indexPath.row].backgroundColor ?? "F6A623")
         cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
         
         return cell
