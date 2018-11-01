@@ -9,14 +9,18 @@
 import UIKit
 import RealmSwift
 import ChameleonFramework
+import StoreKit
 
 class ListItVC: SwipeTableVC {
 
     let realm = try! Realm()
     var listArray: Results<ListModel>?
+    //Real product identifier will be entered after being a member of Apple developer programme.
+    let productIdentifier = "testProductIdentifier"
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        SKPaymentQueue.default().add(self)
         tableView.rowHeight = 80.0
         readListItems()
     }
@@ -60,17 +64,52 @@ class ListItVC: SwipeTableVC {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        
+        if isPurchased() == false {
+            if indexPath.row < 2 {
+                if let listItItem = listArray?[indexPath.row] {
+                    cell.textLabel?.text = listItItem.name
+                    cell.backgroundColor = UIColor(hexString: listArray?[indexPath.row].backgroundColor ?? "F6A623")
+                    cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+                    cell.accessoryType = .none
+                    
+                } else {
+                    cell.textLabel?.text = "No List it categoris added yet."
+                }
+            } else {
+                navigationItem.rightBarButtonItem?.isEnabled = false
+                cell.textLabel?.text = "Get Unlimited List it Categories"
+                cell.textLabel?.textColor = #colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1)
+                cell.accessoryType = .disclosureIndicator
+            }
+        } else {
+            if let listItItem = listArray?[indexPath.row] {
+                cell.textLabel?.text = listItItem.name
+                cell.backgroundColor = UIColor(hexString: listArray?[indexPath.row].backgroundColor ?? "F6A623")
+                cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+                cell.accessoryType = .none
 
-        cell.textLabel?.text = listArray?[indexPath.row].name ?? "No categories for List it added yet."
-        cell.backgroundColor = UIColor(hexString: listArray?[indexPath.row].backgroundColor ?? "F6A623")
-        cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+            } else {
+                cell.textLabel?.text = "No List it categories added yet."
+            }
+            
+        }
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if isPurchased() == false && indexPath.row == 2 {
+            //buyUnlimitedListIt()
+
+            //To test the buying function without apple developer membership unlimitedListItEnable() function can be used directly.
+             unlimitedListItEnable()
+            
+        } else {
         guard let listIt = listArray?[indexPath.row] else { return }
         performSegue(withIdentifier: "goToDoIt", sender: listIt)
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -80,6 +119,33 @@ class ListItVC: SwipeTableVC {
             doItVC.updateListItItem(listItItem: sender as! ListModel)
         }
     }
+    
+    // MARK: - In-App Purchase Methods
+    
+    func buyUnlimitedListIt() {
+        if SKPaymentQueue.canMakePayments() {
+            //User can make payment
+            print("user can make the payment")
+            let paymentRequest = SKMutablePayment()
+            paymentRequest.productIdentifier = productIdentifier
+            SKPaymentQueue.default().add(paymentRequest)
+        } else {
+            //User can't make payment
+            print("Unable to make a payment!")
+        }
+    }
+    
+    func isPurchased() -> Bool {
+        let purchaseStatus = UserDefaults.standard.bool(forKey: "purchased")
+        return purchaseStatus
+    }
+    
+    func unlimitedListItEnable() {
+        UserDefaults.standard.set(true, forKey: "purchased")
+        navigationItem.rightBarButtonItem?.isEnabled = true
+        tableView.reloadData()
+    }
+    
     
     @IBAction func addButonWasPressed(_ sender: UIBarButtonItem) {
         
@@ -104,4 +170,23 @@ class ListItVC: SwipeTableVC {
     }
     
 
+}
+
+extension ListItVC: SKPaymentTransactionObserver {
+    
+    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        for transaction in transactions {
+            if transaction.transactionState == .purchased {
+                // User payment succesfull
+                unlimitedListItEnable()
+                SKPaymentQueue.default().finishTransaction(transaction)
+            } else if transaction.transactionState == .failed {
+                // Payment failed
+                if let error = transaction.error {
+                    print("Transaction failed due to error: \(error.localizedDescription)")
+                }
+                SKPaymentQueue.default().finishTransaction(transaction)
+            }
+        }
+    }
 }

@@ -9,9 +9,11 @@
 import UIKit
 import RealmSwift
 import ChameleonFramework
+import StoreKit
 
 class DoItVC: SwipeTableVC {
 
+    
     @IBOutlet weak var searchBar: UISearchBar!
     let realm = try! Realm()
     var doItItems: Results<DoModel>?
@@ -41,7 +43,7 @@ class DoItVC: SwipeTableVC {
         navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: FlatWhite()]
     }
 
-    // MARK: - Table view data source
+
     
     func updateListItItem(listItItem: ListModel) {
         self.listItItem = listItItem
@@ -66,6 +68,8 @@ class DoItVC: SwipeTableVC {
         }
     }
 
+    // MARK: - Table view data source
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return doItItems?.count ?? 1
     }
@@ -74,25 +78,28 @@ class DoItVC: SwipeTableVC {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
-        if let doItItem = doItItems?[indexPath.row] {
-            cell.textLabel?.text = doItItem.title
-            let listItItemColor = UIColor(hexString: listItItem.backgroundColor)
-            cell.backgroundColor = listItItemColor!.darken(byPercentage: (CGFloat(indexPath.row) / CGFloat((doItItems?.count)!)))
-            cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
-            
-            if doItItem.done == true {
-                cell.accessoryType = .checkmark
-            } else {
-                cell.accessoryType = .none
-            }
-        } else {
-            cell.textLabel?.text = "No do it items added yet."
-        }
+                if let doItItem = doItItems?[indexPath.row] {
+                    cell.textLabel?.text = doItItem.title
+                    let listItItemColor = UIColor(hexString: listItItem.backgroundColor)
+                    cell.backgroundColor = listItItemColor!.darken(byPercentage: (CGFloat(indexPath.row) / CGFloat((doItItems?.count)!)))
+                    cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+                    
+                    if doItItem.done == true {
+                        cell.accessoryType = .checkmark
+                    } else {
+                        cell.accessoryType = .none
+                    }
+                } else {
+                    cell.textLabel?.text = "No do it items added yet."
+                }
 
         return cell
     }
     
+    // MARK: - Table view delegate methods
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         if let doItItem = doItItems?[indexPath.row] {
             do {
                 try realm.write {
@@ -106,6 +113,7 @@ class DoItVC: SwipeTableVC {
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
     
     @IBAction func addButtonWasPressed(_ sender: UIBarButtonItem) {
         
@@ -159,3 +167,4 @@ extension DoItVC: UISearchBarDelegate {
     }
     
 }
+
