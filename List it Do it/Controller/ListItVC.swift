@@ -100,10 +100,10 @@ class ListItVC: SwipeTableVC {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isPurchased() == false && indexPath.row == 2 {
-            //buyUnlimitedListIt()
+            buyUnlimitedListIt()
 
             //To test the buying function without apple developer membership unlimitedListItEnable() function can be used directly.
-             unlimitedListItEnable()
+            // unlimitedListItEnable()
             
         } else {
         guard let listIt = listArray?[indexPath.row] else { return }
